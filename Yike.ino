@@ -1,6 +1,14 @@
 #include <ESP8266WiFi.h>
 #include <Ticker.h>
 
+#ifndef STASSID
+#define STASSID "一刻自习室"
+#define STAPSK  "@666888."
+#endif
+
+const char* ssid     = STASSID;
+const char* password = STAPSK;
+
 Ticker flipper;
 WiFiClient client;
 
@@ -206,7 +214,7 @@ void SmartConfig()
 
 bool AutoConfig()
 {
-  WiFi.begin();
+  WiFi.begin(ssid, password);
   for (int i = 0; i < 20; i++)
   {
     int wstatus = WiFi.status();
