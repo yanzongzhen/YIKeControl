@@ -30,10 +30,14 @@ String CLOSE_RESP = "010C\r\n";
 String OPEN_RESP = "010D\r\n";
 String ping = "0100\r\n";
 String CURRENT_STATE = "";
+unsigned long ledOn = 500;
 
 // tcp server
-const char* host = "47.105.74.173";
-const int port = 53409;
+ const char* host = "47.105.74.173";
+ const int port = 53409;
+
+//const char* host = "47.105.90.103";
+//const int port = 53409;
 
 void ICACHE_RAM_ATTR  localControl();
 
@@ -112,10 +116,7 @@ void loop()
 
 String openLock()
 {
-  digitalWrite(Relay, LOW);
-  delay(50);
-  digitalWrite(Relay, HIGH);
-  delay(50);
+  ChangeLock();
   CURRENT_STATE = OPENED_STATE;
   maunal = false;
   return OPEN_RESP;
@@ -124,13 +125,31 @@ String openLock()
 // close lock and tiggle lockstate
 String closeLock()
 {
-  digitalWrite(Relay, LOW);
-  delay(50);
-  digitalWrite(Relay, HIGH);
-  delay(50);
+  ChangeLock();
   CURRENT_STATE = CLOSED_STATE;
   maunal = false;
   return CLOSE_RESP;
+}
+
+void ChangeLock()
+{
+  Serial.println("Triggle Start.... ");
+  digitalWrite(Relay, LOW);
+  unsigned long startTime = millis();
+  while(1)
+  {
+    unsigned long costTime = millis() - startTime;
+    Serial.print("cost time : ");
+    Serial.println(costTime);
+    if (costTime >= ledOn)
+    {
+      Serial.println("High");
+      digitalWrite(Relay, HIGH);
+      delay(50);
+      break;
+    }
+  }
+  Serial.println("Triggle OK ....");
 }
 
 // get lock state
